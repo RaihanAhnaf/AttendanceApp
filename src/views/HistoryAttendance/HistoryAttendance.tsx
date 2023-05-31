@@ -1,5 +1,6 @@
 import {
   Alert,
+  Button,
   Modal,
   Pressable,
   ScrollView,
@@ -38,8 +39,34 @@ const HistoryAttendance = ({navigation}: HistoryAttendancePageProps) => {
 
   const [btnSelected, setBtnSelected] = useState(1);
 
-  const [date, setDate] = useState(new Date());
-  const [open, setOpen] = useState(false);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const [startModalVisible, setStartModalVisible] = useState(false);
+  const [endModalVisible, setEndModalVisible] = useState(false);
+
+  const handleStartDateChange = (date: React.SetStateAction<Date>) => {
+    setStartDate(date);
+  };
+
+  const handleEndDateChange = (date: React.SetStateAction<Date>) => {
+    setEndDate(date);
+  };
+
+  const openStartDatePicker = () => {
+    setStartModalVisible(true);
+  };
+
+  const openEndDatePicker = () => {
+    setEndModalVisible(true);
+  };
+
+  const closeStartDatePicker = () => {
+    setStartModalVisible(false);
+  };
+
+  const closeEndDatePicker = () => {
+    setEndModalVisible(false);
+  };
 
   const toggleOverlay = () => {
     setModal({
@@ -248,28 +275,64 @@ const HistoryAttendance = ({navigation}: HistoryAttendancePageProps) => {
               <View style={{flexDirection: 'row'}}>
                 <View>
                   <Text>Dari</Text>
-                  <TouchableOpacity onPress={() => setOpen(true)}>
-                    <Icon name="date-range" color={'black'} size={24} />
-                  </TouchableOpacity>
-                  <DatePicker
-                    modal
-                    open={open}
-                    date={date}
-                    mode="date"
-                    onConfirm={date => {
-                      setOpen(false);
-                      setDate(date);
-                    }}
-                    onCancel={() => {
-                      setOpen(false);
-                    }}
-                  />
+                  {/* <TouchableOpacity onPress={() => setOpen(true)}> */}
+                  <View style={{flexDirection: 'row', marginTop: 10}}>
+                    <TouchableOpacity onPress={openStartDatePicker}>
+                      <Icon name="date-range" color={'black'} size={24} />
+                    </TouchableOpacity>
+                    <Modal
+                      visible={startModalVisible}
+                      transparent={true}
+                      animationType="slide"
+                      onRequestClose={closeStartDatePicker}>
+                      <View style={style.modalContainer}>
+                        <View style={style.modalContent}>
+                          <DatePicker
+                            date={startDate}
+                            onDateChange={handleStartDateChange}
+                            mode="date"
+                          />
+                          <Button
+                            title="Selesai"
+                            onPress={closeStartDatePicker}
+                          />
+                        </View>
+                      </View>
+                    </Modal>
+                    <Text style={{marginLeft: 10}}>
+                      {startDate.toDateString()}
+                    </Text>
+                  </View>
                 </View>
                 <View style={{marginLeft: 30}}>
                   <Text>Hingga</Text>
-                  <TouchableOpacity onPress={() => setOpen(true)}>
-                    <Icon name="date-range" color={'black'} size={24} />
-                  </TouchableOpacity>
+                  <View style={{flexDirection: 'row', marginTop: 10}}>
+                    <TouchableOpacity onPress={openEndDatePicker}>
+                      <Icon name="date-range" color={'black'} size={24} />
+                    </TouchableOpacity>
+                    <Modal
+                      visible={endModalVisible}
+                      transparent={true}
+                      animationType="slide"
+                      onRequestClose={closeEndDatePicker}>
+                      <View style={style.modalContainer}>
+                        <View style={style.modalContent}>
+                          <DatePicker
+                            date={endDate}
+                            onDateChange={handleEndDateChange}
+                            mode="date"
+                          />
+                          <Button
+                            title="Selesai"
+                            onPress={closeEndDatePicker}
+                          />
+                        </View>
+                      </View>
+                    </Modal>
+                    <Text style={{marginLeft: 10}}>
+                      {endDate.toDateString()}
+                    </Text>
+                  </View>
                 </View>
               </View>
               <Pressable style={style.btn} onPress={() => []}>

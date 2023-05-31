@@ -230,4 +230,17 @@ export default StyleSheet.create({
     backgroundColor: '#4318FE',
     borderRadius: 8,
   },
+
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
 });
