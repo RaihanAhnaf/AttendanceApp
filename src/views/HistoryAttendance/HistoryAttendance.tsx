@@ -17,6 +17,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {BottomSheet} from 'react-native-btr';
 import DatePicker from 'react-native-date-picker';
 import CardAttendance from '../../components/CardAttendance';
+import BottomSheets from '../../components/BottomSheets';
 
 type RootStackParamList = {
   HistoryAttendance: undefined;
@@ -80,6 +81,11 @@ const HistoryAttendance = ({navigation}: HistoryAttendancePageProps) => {
   const toggleBottomSheet = () => {
     setVisible(!visible);
   };
+
+  const onPress = () => {
+    BottomSheets;
+  };
+
   return (
     <SafeAreaView>
       <ScrollView>
@@ -98,42 +104,11 @@ const HistoryAttendance = ({navigation}: HistoryAttendancePageProps) => {
             </Text>
           </View>
           <View style={{marginLeft: 'auto'}}>
-            <TouchableOpacity
-              style={{paddingRight: 16}}
-              onPress={toggleBottomSheet}>
+            <TouchableOpacity style={{paddingRight: 16}} onPress={onPress}>
               <Icon name="filter-alt" color={'black'} size={24} />
             </TouchableOpacity>
           </View>
         </View>
-        {/* <View style={style.boxHistory}>
-          <View style={{flexDirection: 'row'}}>
-            <View>
-              <Text style={[style.baseTextDay, style.primaryColor]}>
-                Senin,
-              </Text>
-              <Text style={[style.baseTextDate, style.primaryColor]}>
-                20 Maret 2023
-              </Text>
-            </View>
-            <View style={[style.boxPil, style.boxPilHadir]}>
-              <Text style={[style.textPil, style.primaryColor]}>Hadir</Text>
-            </View>
-          </View>
-          <View style={{flexDirection: 'row'}}>
-            <View style={style.keteranganJamAbsensi}>
-              <Text style={style.descJam}>Jam Masuk</Text>
-              <Text style={[style.jam, style.primaryColor]}>07:32</Text>
-            </View>
-            <View style={style.keteranganJamAbsensi}>
-              <Text style={style.descJam}>Jam Pulang</Text>
-              <Text style={[style.jam, style.primaryColor]}>14:38</Text>
-            </View>
-            <View style={style.keteranganAbsensi}>
-              <Text style={style.descJam}>Keterangan</Text>
-              
-            </View>
-          </View>
-        </View> */}
         <CardAttendance />
         <View style={style.boxHistory}>
           <View style={{flexDirection: 'row'}}>

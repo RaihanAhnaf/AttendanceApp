@@ -13,6 +13,7 @@ import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import style from './Home.style';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import CardAttendance from '../../components/CardAttendance';
 // import CountDown from 'react-native-countdown-component';
 // import moment from 'moment';
 
@@ -119,6 +120,7 @@ const Home = ({navigation}: HomePageProps) => {
             <Text style={[style.subTitleText, style.blackColor]}>
               Riwayat Absensi
             </Text>
+            <CardAttendance />
             <View style={style.boxHistory}>
               <View style={{flexDirection: 'row'}}>
                 <View>
