@@ -137,6 +137,11 @@ export default StyleSheet.create({
     borderRadius: 8,
     marginBottom: 20,
   },
+  btnLainnya2: {
+    marginLeft: 'auto',
+    marginRight: 16,
+    marginTop: 30,
+  },
   boxHistory: {
     marginTop: 10,
     marginHorizontal: 15,
@@ -240,5 +245,8 @@ export default StyleSheet.create({
     top: 0,
     left: 0,
     zIndex: -1,
+  },
+  bottomSpace: {
+    marginBottom: 30,
   },
 });

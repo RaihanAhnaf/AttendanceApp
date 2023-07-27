@@ -1,41 +1,38 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 
-const CardAttendance = () => {
+const CardLate = () => {
   return (
     <View style={style.boxHistory}>
       <View style={{flexDirection: 'row'}}>
         <View>
-          <Text style={[style.baseTextDay, style.primaryColor]}>Senin,</Text>
-          <Text style={[style.baseTextDate, style.primaryColor]}>
-            20 Maret 2023
+          <Text style={[style.baseTextDay, style.orangeColor]}>Kamis,</Text>
+          <Text style={[style.baseTextDate, style.orangeColor]}>
+            16 Maret 2023
           </Text>
         </View>
-        <View style={[style.boxPil, style.boxPilHadir]}>
-          <Text style={[style.textPil, style.primaryColor]}>Hadir</Text>
+        <View style={[style.boxPil, style.boxPilTerlambat]}>
+          <Text style={[style.textPil, style.orangeColor]}>Terlambat</Text>
         </View>
       </View>
       <View style={{flexDirection: 'row'}}>
         <View style={style.keteranganJamAbsensi}>
           <Text style={style.descJam}>Jam Masuk</Text>
-          <Text style={[style.jam, style.primaryColor]}>07:32</Text>
+          <Text style={[style.jam, style.orangeColor]}>08:24</Text>
         </View>
         <View style={style.keteranganJamAbsensi}>
           <Text style={style.descJam}>Jam Pulang</Text>
-          <Text style={[style.jam, style.primaryColor]}>14:38</Text>
+          <Text style={[style.jam, style.orangeColor]}>15:02</Text>
         </View>
         <View style={style.keteranganAbsensi}>
           <Text style={style.descJam}>Keterangan</Text>
-          {/* <TouchableOpacity>
-                            <Text style={[style.fileButton, style.primaryColor]}>file</Text>
-                        </TouchableOpacity> */}
         </View>
       </View>
     </View>
   );
 };
 
-export default CardAttendance;
+export default CardLate;
 
 const style = StyleSheet.create({
   primaryColor: {

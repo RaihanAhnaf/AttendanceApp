@@ -14,6 +14,14 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import style from './Home.style';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import CardAttendance from '../../components/CardAttendance';
+import CardNotPresent from '../../components/CardNotPresent';
+import CardLate from '../../components/CardLate';
+import FileModal from '../../components/FileModal';
+import NotPresentButton from '../../components/NotPresentButton';
+import PresentButton from '../../components/PresentButton';
+import {useNavigation} from '@react-navigation/native';
+import {type StackNavigation} from '../../components/PresentButton';
+import CardTask from '../../components/CardTask';
 // import CountDown from 'react-native-countdown-component';
 // import moment from 'moment';
 
@@ -29,6 +37,7 @@ type RootStackParamList = {
   HistoryAttendance: undefined; // a screen that we are navigating to
   // in the current screen, that we don't pass any props to it
   SignIn: undefined;
+  TaskList: undefined;
 };
 
 interface HomePageProps {
@@ -48,6 +57,10 @@ const Home = ({navigation}: HomePageProps) => {
   //   var d = hours * 60 * 60 + minutes * 60 + seconds;
   //   setTotalDuration(d);
   // }, []);
+
+  const {navigate} = useNavigation<StackNavigation>();
+
+  const handleOnNavigate = () => navigate('ForgotPassword');
 
   const [modal, setModal] = useState({
     isVisible: false,
@@ -106,52 +119,43 @@ const Home = ({navigation}: HomePageProps) => {
                 />
               </View> */}
               <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                <TouchableOpacity style={style.btnHadir}>
-                  <Text style={[style.btnText, style.whiteColor]}>Hadir</Text>
-                </TouchableOpacity>
+                <PresentButton />
                 <View style={style.space} />
-                <TouchableOpacity style={style.btnTidakHadir}>
+                <NotPresentButton />
+              </View>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={[style.subTitleText, style.blackColor]}>Task</Text>
+              <View style={style.btnLainnya2}>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('TaskList');
+                  }}>
                   <Text style={[style.btnText, style.primaryColor]}>
-                    Tidak Hadir
+                    Lihat Lainnya
                   </Text>
                 </TouchableOpacity>
               </View>
             </View>
-            <Text style={[style.subTitleText, style.blackColor]}>
-              Riwayat Absensi
-            </Text>
-            <CardAttendance />
-            <View style={style.boxHistory}>
-              <View style={{flexDirection: 'row'}}>
-                <View>
-                  <Text style={[style.baseTextDay, style.primaryColor]}>
-                    Senin,
+            <CardTask />
+            <View style={{flexDirection: 'row'}}>
+              <Text style={[style.subTitleText, style.blackColor]}>
+                Riwayat Absensi
+              </Text>
+              <View style={style.btnLainnya2}>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('HistoryAttendance');
+                  }}>
+                  <Text style={[style.btnText, style.primaryColor]}>
+                    Lihat Lainnya
                   </Text>
-                  <Text style={[style.baseTextDate, style.primaryColor]}>
-                    20 Maret 2023
-                  </Text>
-                </View>
-                <View style={[style.boxPil, style.boxPilHadir]}>
-                  <Text style={[style.textPil, style.primaryColor]}>Hadir</Text>
-                </View>
-              </View>
-              <View style={{flexDirection: 'row'}}>
-                <View style={style.keteranganJamAbsensi}>
-                  <Text style={style.descJam}>Jam Masuk</Text>
-                  <Text style={[style.jam, style.primaryColor]}>07:32</Text>
-                </View>
-                <View style={style.keteranganJamAbsensi}>
-                  <Text style={style.descJam}>Jam Pulang</Text>
-                  <Text style={[style.jam, style.primaryColor]}>14:38</Text>
-                </View>
-                <View style={style.keteranganAbsensi}>
-                  <Text style={style.descJam}>Keterangan</Text>
-                  {/* <TouchableOpacity>
-                        <Text style={[style.fileButton, style.primaryColor]}>file</Text>
-                    </TouchableOpacity> */}
-                </View>
+                </TouchableOpacity>
               </View>
             </View>
+            <CardAttendance />
+            <CardNotPresent />
+            <CardLate />
             <View style={style.boxHistory}>
               <View style={{flexDirection: 'row'}}>
                 <View>
@@ -193,101 +197,11 @@ const Home = ({navigation}: HomePageProps) => {
                 </View>
               </View>
             </View>
-            <View style={style.boxHistory}>
-              <View style={{flexDirection: 'row'}}>
-                <View>
-                  <Text style={[style.baseTextDay, style.orangeColor]}>
-                    Kamis,
-                  </Text>
-                  <Text style={[style.baseTextDate, style.orangeColor]}>
-                    16 Maret 2023
-                  </Text>
-                </View>
-                <View style={[style.boxPil, style.boxPilTerlambat]}>
-                  <Text style={[style.textPil, style.orangeColor]}>
-                    Terlambat
-                  </Text>
-                </View>
-              </View>
-              <View style={{flexDirection: 'row'}}>
-                <View style={style.keteranganJamAbsensi}>
-                  <Text style={style.descJam}>Jam Masuk</Text>
-                  <Text style={[style.jam, style.orangeColor]}>08:24</Text>
-                </View>
-                <View style={style.keteranganJamAbsensi}>
-                  <Text style={style.descJam}>Jam Pulang</Text>
-                  <Text style={[style.jam, style.orangeColor]}>15:02</Text>
-                </View>
-                <View style={style.keteranganAbsensi}>
-                  <Text style={style.descJam}>Keterangan</Text>
-                  {/* <TouchableOpacity>
-                    <Text style={[style.fileButton, style.primaryColor]}>
-                      file
-                    </Text>
-                  </TouchableOpacity> */}
-                </View>
-              </View>
-            </View>
-            <View style={{alignItems: 'center', marginTop: 10}}>
-              <TouchableOpacity
-                style={style.btnLainnya}
-                onPress={() => {
-                  navigation.navigate('HistoryAttendance');
-                }}>
-                <Text style={[style.btnText, style.primaryColor]}>
-                  Lihat Lainnya
-                </Text>
-              </TouchableOpacity>
-            </View>
+            <View style={style.bottomSpace} />
           </View>
         </ImageBackground>
       </ScrollView>
-      <View>
-        <Modal
-          animationType="none"
-          transparent={true}
-          visible={modal.isVisible}
-          style={style.modalParent}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-            setModal({
-              ...modal,
-              isVisible: !modal.isVisible,
-            });
-          }}>
-          <View style={style.centeredView}>
-            <Pressable
-              style={style.bg}
-              onPress={() => {
-                setModal({
-                  ...modal,
-                  isVisible: !modal.isVisible,
-                });
-              }}
-            />
-            <View style={style.modalView}>
-              <Text style={[style.modalTitleText, style.blackColor]}>
-                Tidak Hadir
-              </Text>
-              <Text style={style.textTitle}>Status</Text>
-              <View style={style.boxPilStatus}>
-                <Text style={[style.textPil, style.primaryColor]}>Sakit</Text>
-              </View>
-              <Text style={style.textTitle}>Tanggal</Text>
-              <Text style={style.textSubTitle}>Jumat, 17 Maret 2023</Text>
-              <Text style={style.textTitle}>Keterangan</Text>
-              <Text style={style.textSubTitle}>Ijin sakit tipes</Text>
-              <Text style={style.textTitle}>File Bukti</Text>
-              <Text style={style.textSubTitle}>Kosong</Text>
-              {/* <Pressable
-                  style={[style.button, style.buttonClose]}
-                  onPress={() => setModalVisible(!modalVisible)}>
-                  <Text style={style.textStyle}>Hide Modal</Text>
-                </Pressable> */}
-            </View>
-          </View>
-        </Modal>
-      </View>
+      <FileModal isVisible={modal.isVisible} setModal={setModal} />
     </SafeAreaView>
   );
 };

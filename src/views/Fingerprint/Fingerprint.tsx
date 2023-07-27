@@ -12,7 +12,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 type RootStackParamList = {
   Fingerprint: undefined; //current screen
-  Blank: undefined;
+  Home: undefined;
 };
 
 interface FingerprintPageProps {
@@ -40,7 +40,7 @@ const Fingerprint = ({navigation}: FingerprintPageProps) => {
           <TouchableOpacity
             style={style.btn}
             onPress={() => {
-              navigation.navigate('Blank');
+              navigation.navigate('Home');
             }}>
             <Text style={[style.btnText, style.primaryColor]}>Continue</Text>
           </TouchableOpacity>

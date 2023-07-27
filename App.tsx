@@ -7,6 +7,9 @@ import SignIn from './src/views/SignIn/SignIn';
 import Blank from './src/views/Blank/Blank';
 import Fingerprint from './src/views/Fingerprint/Fingerprint';
 import ForgotPassword from './src/views/ForgotPassword/ForgotPassword';
+import PresentButton from './src/components/PresentButton';
+import TaskList from './src/views/TaskList/TaskList';
+import TaskDetail from './src/views/TaskDetail/TaskDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +45,21 @@ function App({}) {
         <Stack.Screen
           name="ForgotPassword"
           component={ForgotPassword}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="PresentButton"
+          component={PresentButton}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="TaskList"
+          component={TaskList}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="TaskDetail"
+          component={TaskDetail}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

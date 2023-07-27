@@ -9,43 +9,17 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 
-const FileModal = () => {
-  const [modal, setModal] = useState({
-    isVisible: false,
-    isOverlay: 0,
-  });
-
-  const toggleOverlay = () => {
-    setModal({
-      ...modal,
-      isVisible: !modal.isVisible,
-    });
-  };
-
+const FileModal = ({isVisible, setModal}: {isVisible: any; setModal: any}) => {
   return (
     <View>
       <Modal
         animationType="none"
         transparent={true}
-        visible={modal.isVisible}
+        visible={isVisible}
         style={style.modalParent}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setModal({
-            ...modal,
-            isVisible: !modal.isVisible,
-          });
-        }}>
+        onRequestClose={setModal}>
         <View style={style.centeredView}>
-          <Pressable
-            style={style.bg}
-            onPress={() => {
-              setModal({
-                ...modal,
-                isVisible: !modal.isVisible,
-              });
-            }}
-          />
+          <Pressable style={style.bg} onPress={setModal} />
           <View style={style.modalView}>
             <Text style={[style.modalTitleText, style.blackColor]}>
               Tidak Hadir
