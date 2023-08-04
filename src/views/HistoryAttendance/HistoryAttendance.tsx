@@ -1,5 +1,6 @@
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import React, {useState} from 'react';
 import {
-  Alert,
   Button,
   Modal,
   Pressable,
@@ -8,23 +9,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
-import style from './History.style';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import style from './History.style';
 // import BottomSheet from '../../components/BottomSheet';
 import {BottomSheet} from 'react-native-btr';
 import DatePicker from 'react-native-date-picker';
 import CardAttendance from '../../components/CardAttendance';
-import CardNotPresent from '../../components/CardNotPresent';
-import CardLate from '../../components/CardLate';
-
-type RootStackParamList = {
-  HistoryAttendance: undefined;
-  Home: undefined;
-  Blank: undefined;
-};
+import useAttendance from '../../hooks/useAttendance';
+import {RootStackParamList} from '../../types/root-stack.type';
 
 interface HistoryAttendancePageProps {
   navigation: NativeStackNavigationProp<
@@ -34,6 +27,8 @@ interface HistoryAttendancePageProps {
 }
 
 const HistoryAttendance = ({navigation}: HistoryAttendancePageProps) => {
+  const {attendances} = useAttendance();
+
   const [btnSelected, setBtnSelected] = useState(1);
 
   const [startDate, setStartDate] = useState(new Date());
@@ -96,20 +91,15 @@ const HistoryAttendance = ({navigation}: HistoryAttendancePageProps) => {
             </TouchableOpacity>
           </View>
         </View>
-        <CardAttendance />
-        <CardNotPresent />
-        <CardLate />
-        <View style={{alignItems: 'center', marginTop: 10}}>
-          <TouchableOpacity
-            style={style.btnLainnya}
-            onPress={() => {
-              navigation.navigate('Blank');
-            }}>
-            <Text style={[style.btnText, style.primaryColor]}>
-              Test Fingerprint
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {attendances.length !== 0 ? (
+          attendances.map((attendance, idx) => (
+            <CardAttendance attendance={attendance} key={idx} />
+          ))
+        ) : (
+          <View style={style.absenceBox}>
+            <Text style={style.absenceBox_text}>Belum ada data absensi</Text>
+          </View>
+        )}
       </ScrollView>
       {/* <BottomSheet /> */}
       <BottomSheet

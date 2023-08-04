@@ -1,5 +1,5 @@
-import {Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
 import React, {useState} from 'react';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const NotPresentModal = () => {
@@ -10,12 +10,6 @@ const NotPresentModal = () => {
 
   const [btnSelected, setBtnSelected] = useState(1);
 
-  const toggleOverlay = () => {
-    setModal({
-      ...modal,
-      isVisible: !modal.isVisible,
-    });
-  };
   return (
     <View style={style.centeredView}>
       <Pressable
@@ -60,18 +54,6 @@ const NotPresentModal = () => {
             </Text>
           </Pressable>
         </View>
-        <Text style={style.textTitle}>Keterangan</Text>
-        <TextInput
-          multiline={true}
-          numberOfLines={4}
-          style={{
-            borderWidth: 1,
-            borderRadius: 5,
-            marginBottom: 20,
-            maxHeight: 100,
-          }}
-          placeholder="Keterangan"
-        />
         <Text style={style.textTitle}>File Bukti</Text>
         <Pressable style={style.btnUpload} onPress={() => []}>
           <Icon

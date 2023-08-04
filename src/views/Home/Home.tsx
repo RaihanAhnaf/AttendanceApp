@@ -1,77 +1,126 @@
-import {
-  Text,
-  ImageBackground,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
-  Modal,
-  Alert,
-  Pressable,
-} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import style from './Home.style';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Geolocation, {
+  GeolocationError,
+} from '@react-native-community/geolocation';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import moment from 'moment-timezone';
+import React, {useContext, useState} from 'react';
+import {
+  ImageBackground,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {DocumentPickerResponse} from 'react-native-document-picker';
+import Snackbar from 'react-native-snackbar';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import CardAttendance from '../../components/CardAttendance';
-import CardNotPresent from '../../components/CardNotPresent';
-import CardLate from '../../components/CardLate';
-import FileModal from '../../components/FileModal';
-import NotPresentButton from '../../components/NotPresentButton';
-import PresentButton from '../../components/PresentButton';
-import {useNavigation} from '@react-navigation/native';
-import {type StackNavigation} from '../../components/PresentButton';
 import CardTask from '../../components/CardTask';
+import NotPresentButton from '../../components/NotPresentButton';
+import useAttendance from '../../hooks/useAttendance';
+import useTask from '../../hooks/useTask';
+import {UserContext} from '../../providers/user/user.context';
+import {toPresenceToday} from '../../services/attendance/attendance.service';
+import {RootStackParamList} from '../../types/root-stack.type';
+import {formatImageUpload} from '../../utils/formatImageUpload.utils';
+import style from './Home.style';
 // import CountDown from 'react-native-countdown-component';
-// import moment from 'moment';
-
-type RootStackParamList = {
-  Home: undefined; //current screen
-
-  //   PdpComments: {slug: string}; // a screen that we are
-  // navigating to, in the current screen,
-  // that we should pass a prop named `slug` to it
-
-  //   Sellers: {data: Array<string>};
-
-  HistoryAttendance: undefined; // a screen that we are navigating to
-  // in the current screen, that we don't pass any props to it
-  SignIn: undefined;
-  TaskList: undefined;
-};
 
 interface HomePageProps {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
 }
 
 const Home = ({navigation}: HomePageProps) => {
-  // const [totalDuration, setTotalDuration] = useState(0);
+  const {user} = useContext(UserContext);
+  const {
+    attendanceSetting,
+    attendanceToday,
+    attendances,
+    fetchAttendanceToday,
+    fetchAttendances,
+  } = useAttendance();
 
-  // useEffect(() => {
-  //   var date = moment().utcOffset('+05:30').format('YYYY-MM-DD hh:mm:ss');
-  //   var expirydate = '2020-12-23 04:00:45';
-  //   var diffr = moment.duration(moment(expirydate).diff(moment(date)));
-  //   var hours = parseInt(diffr.asHours());
-  //   var minutes = parseInt(diffr.minutes());
-  //   var seconds = parseInt(diffr.seconds());
-  //   var d = hours * 60 * 60 + minutes * 60 + seconds;
-  //   setTotalDuration(d);
-  // }, []);
+  const {tasks} = useTask();
 
-  const {navigate} = useNavigation<StackNavigation>();
-
-  const handleOnNavigate = () => navigate('ForgotPassword');
-
-  const [modal, setModal] = useState({
-    isVisible: false,
-    isOverlay: 0,
+  const [absent, setAbsent] = useState<{
+    file: DocumentPickerResponse | null;
+    absent_type: number | null;
+  }>({
+    file: null,
+    absent_type: null,
   });
 
-  const toggleOverlay = () => {
-    setModal({
-      ...modal,
-      isVisible: !modal.isVisible,
-    });
+  const handlePresence = async () => {
+    Geolocation.getCurrentPosition(
+      async info => {
+        try {
+          if (attendanceToday?.time_sign_in) {
+            await toPresenceToday(
+              {
+                latitude_out: info.coords.latitude,
+                longitude_out: info.coords.longitude,
+              },
+              null,
+            );
+
+            Snackbar.show({
+              text: 'Berhasil absen pulang',
+              duration: Snackbar.LENGTH_SHORT,
+              backgroundColor: 'green',
+            });
+          } else {
+            await toPresenceToday(
+              {
+                latitude_in: info.coords.latitude,
+                longitude_in: info.coords.longitude,
+                absence_type: absent.absent_type
+                  ? absent.absent_type === 1
+                    ? 'sick'
+                    : 'permit'
+                  : null,
+              },
+              absent.file
+                ? formatImageUpload({
+                    fileUri: absent.file.fileCopyUri!,
+                    name: absent.file.name!,
+                    type: absent.file.type!,
+                  })
+                : null,
+            );
+
+            Snackbar.show({
+              text: 'Berhasil absen masuk',
+              duration: Snackbar.LENGTH_SHORT,
+              backgroundColor: 'green',
+            });
+          }
+
+          setAbsent({
+            file: null,
+            absent_type: null,
+          });
+
+          await fetchAttendanceToday();
+          await fetchAttendances();
+        } catch (error) {
+          console.log(error);
+          Snackbar.show({
+            text: error!.toString(),
+            duration: Snackbar.LENGTH_SHORT,
+            backgroundColor: 'red',
+          });
+        }
+      },
+      (error: GeolocationError) => {
+        Snackbar.show({
+          text: error.message,
+          duration: Snackbar.LENGTH_SHORT,
+          backgroundColor: 'red',
+        });
+      },
+    );
   };
 
   return (
@@ -84,46 +133,91 @@ const Home = ({navigation}: HomePageProps) => {
             <View>
               <Text style={[style.baseTextName, style.whiteColor]}>Halo,</Text>
               <Text style={[style.titleTextName, style.whiteColor]}>
-                Budi Santoso
+                {user?.name ?? '-'}
               </Text>
             </View>
             <View style={{marginLeft: 'auto'}}>
               <TouchableOpacity
-                onPress={() => {
+                onPress={async () => {
                   navigation.navigate('SignIn');
+                  await AsyncStorage.removeItem('auth');
                 }}>
                 <Icon name="exit-to-app" color={'white'} size={24} />
               </TouchableOpacity>
             </View>
           </View>
           <View style={style.boxContent}>
-            <View style={style.boxCountdownTime}>
-              <Text style={[style.titleTextTime, style.blackColor]}>
-                Absensi akan dibuka pada
-              </Text>
-              {/* <View style={style.containerTime}>
-                <Text style={style.titleTime}>
-                  React Native CountDown Timer |
-                  react-native-countdown-component
+            {(attendanceToday?.time_sign_in &&
+              attendanceToday?.time_sign_out) ||
+            attendanceToday?.type === 'absent' ? (
+              <View style={style.boxCountdownTime}>
+                <Text style={[style.titleTextTime, style.blackColor]}>
+                  Anda Sudah Absen Hari Ini
                 </Text>
-                <CountDown
-                  until={totalDuration}
-                  //duration of countdown in seconds
-                  timetoShow={('H', 'M', 'S')}
-                  //formate to show
-                  onFinish={() => alert('finished')}
-                  //on Finish call
-                  onPress={() => alert('hello')}
-                  //on Press call
-                  size={20}
-                />
-              </View> */}
-              <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                <PresentButton />
-                <View style={style.space} />
-                <NotPresentButton />
               </View>
-            </View>
+            ) : !attendanceToday?.time_sign_in ? (
+              <View style={style.boxCountdownTime}>
+                <Text style={[style.titleTextTime, style.blackColor]}>
+                  Absensi masuk dibuka pada
+                </Text>
+                <View style={style.time}>
+                  <Text style={style.time_text}>
+                    {attendanceSetting?.time_sign_in
+                      ? moment(attendanceSetting?.time_sign_in)
+                          .tz('Asia/Jakarta')
+                          .format('HH:mm')
+                      : '-'}
+                  </Text>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                  <TouchableOpacity
+                    style={style.btnHadir}
+                    onPress={() => handlePresence()}>
+                    <Text style={[style.btnText, style.whiteColor]}>Hadir</Text>
+                  </TouchableOpacity>
+                  <View style={style.space} />
+                  <NotPresentButton
+                    onSubmited={() => handlePresence()}
+                    fileSelected={file => {
+                      setAbsent({
+                        ...absent,
+                        file,
+                      });
+                    }}
+                    typeSelected={type => {
+                      setAbsent({
+                        ...absent,
+                        absent_type: type,
+                      });
+                    }}
+                  />
+                </View>
+              </View>
+            ) : (
+              <View style={style.boxCountdownTime}>
+                <Text style={[style.titleTextTime, style.blackColor]}>
+                  Absensi pulang dibuka pada
+                </Text>
+                <View style={style.time}>
+                  <Text style={style.time_text}>
+                    {attendanceSetting?.time_sign_out
+                      ? moment(attendanceSetting?.time_sign_out)
+                          .tz('Asia/Jakarta')
+                          .format('HH:mm')
+                      : '-'}
+                  </Text>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                  <TouchableOpacity
+                    style={style.btnHadir}
+                    onPress={() => handlePresence()}>
+                    <Text style={[style.btnText, style.whiteColor]}>
+                      Pulang
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
             <View style={{flexDirection: 'row'}}>
               <Text style={[style.subTitleText, style.blackColor]}>Task</Text>
               <View style={style.btnLainnya2}>
@@ -137,7 +231,28 @@ const Home = ({navigation}: HomePageProps) => {
                 </TouchableOpacity>
               </View>
             </View>
-            <CardTask />
+            {
+              tasks.length !== 0 ? (
+                tasks?.slice(0, 3).map((task, index) => {
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() =>
+                        navigation.navigate('TaskDetail', {
+                          task_id: task.id,
+                        })
+                      }>
+                      <CardTask task={task} />
+                    </TouchableOpacity>
+                  );
+                })
+              ) : (
+                <View style={style.absenceBox}>
+                  <Text style={style.absenceBox_text}>Tidak ada data task</Text>
+                </View>
+              )
+              // <CardTask />
+            }
             <View style={{flexDirection: 'row'}}>
               <Text style={[style.subTitleText, style.blackColor]}>
                 Riwayat Absensi
@@ -153,55 +268,24 @@ const Home = ({navigation}: HomePageProps) => {
                 </TouchableOpacity>
               </View>
             </View>
-            <CardAttendance />
+            {attendances.length !== 0 ? (
+              attendances?.slice(0, 3).map((item, index) => {
+                return <CardAttendance attendance={item} key={index} />;
+              })
+            ) : (
+              <View style={style.absenceBox}>
+                <Text style={style.absenceBox_text}>
+                  Tidak ada data absensi
+                </Text>
+              </View>
+            )}
+            {/* <CardAttendance />
             <CardNotPresent />
-            <CardLate />
-            <View style={style.boxHistory}>
-              <View style={{flexDirection: 'row'}}>
-                <View>
-                  <Text style={[style.baseTextDay, style.redColor]}>
-                    Jumat,
-                  </Text>
-                  <Text style={[style.baseTextDate, style.redColor]}>
-                    17 Maret 2023
-                  </Text>
-                </View>
-                <View style={[style.boxPil, style.boxPilTidakHadir]}>
-                  <Text style={[style.textPil, style.redColor]}>
-                    Tidak Hadir
-                  </Text>
-                </View>
-              </View>
-              <View style={{flexDirection: 'row'}}>
-                <View style={style.keteranganJamAbsensi}>
-                  <Text style={style.descJam}>Jam Masuk</Text>
-                  <Text style={[style.jam, style.redColor]}>-</Text>
-                </View>
-                <View style={style.keteranganJamAbsensi}>
-                  <Text style={style.descJam}>Jam Pulang</Text>
-                  <Text style={[style.jam, style.redColor]}>-</Text>
-                </View>
-                <View style={style.keteranganAbsensi}>
-                  <Text style={style.descJam}>Keterangan</Text>
-                  <TouchableOpacity
-                    onPress={() =>
-                      setModal({
-                        ...modal,
-                        isVisible: !modal.isVisible,
-                      })
-                    }>
-                    <Text style={[style.fileButton, style.primaryColor]}>
-                      file
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
+            <CardLate /> */}
             <View style={style.bottomSpace} />
           </View>
         </ImageBackground>
       </ScrollView>
-      <FileModal isVisible={modal.isVisible} setModal={setModal} />
     </SafeAreaView>
   );
 };

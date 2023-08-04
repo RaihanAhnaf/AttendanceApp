@@ -1,39 +1,41 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-
-type RootStackParamList = {
-  CardTask: undefined;
-  TaskList: undefined;
-};
+import {StyleSheet, Text, View} from 'react-native';
+import {TaskModel} from '../models/task.model';
 
 interface CardTaskProps {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'CardTask'>;
+  task: TaskModel;
 }
 
-// const CardTask = ({navigation}: CardTaskProps) => {
-const CardTask = () => {
+const CardTask = ({task}: CardTaskProps) => {
   return (
-    <TouchableOpacity>
-      <View style={styles.boxTask}>
-        <View style={{flexDirection: 'row'}}>
-          <View>
-            <Text
-              numberOfLines={1}
-              style={[styles.baseTextTitleTask, styles.primaryColor]}>
-              Ini judul ya ges ya akowkoaeok
-            </Text>
-          </View>
-          <View style={[styles.boxPil, styles.boxPilSelesai]}>
-            <Text style={[styles.textPil, styles.primaryColor]}>Selesai</Text>
-          </View>
+    <View style={styles.boxTask}>
+      <View style={{flexDirection: 'row'}}>
+        <View>
+          <Text
+            numberOfLines={1}
+            style={[styles.baseTextTitleTask, styles.primaryColor]}>
+            {task?.title}
+          </Text>
         </View>
-        <Text style={styles.textSubTitleDate}>Deadline</Text>
-        <Text style={[styles.baseTextDeadline, styles.primaryColor]}>
-          20 Maret 2023
-        </Text>
+        <View
+          style={[
+            styles.boxPil,
+            task?.is_finished ? styles.boxPilSelesai : styles.orangeColor,
+          ]}>
+          <Text
+            style={[
+              styles.textPil,
+              task?.is_finished ? styles.primaryColor : styles.orangeColor,
+            ]}>
+            {task?.is_finished ? 'Selesai' : 'Belum Selesai'}
+          </Text>
+        </View>
       </View>
-    </TouchableOpacity>
+      <Text style={styles.textSubTitleDate}>Deadline</Text>
+      <Text style={[styles.baseTextDeadline, styles.primaryColor]}>
+        {task?.deadline?.formatted}
+      </Text>
+    </View>
   );
 };
 
@@ -42,6 +44,10 @@ export default CardTask;
 const styles = StyleSheet.create({
   primaryColor: {
     color: '#4318FE',
+  },
+  orangeColor: {
+    backgroundColor: '#F97316',
+    color: 'white',
   },
   whiteColor: {
     color: 'white',

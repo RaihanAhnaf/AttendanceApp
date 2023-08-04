@@ -243,4 +243,17 @@ export default StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
   },
+  absenceBox: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    padding: 16,
+    marginHorizontal: 16,
+    borderRadius: 8,
+  },
+  absenceBox_text: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });

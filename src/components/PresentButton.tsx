@@ -1,3 +1,4 @@
+import React, {useState} from 'react';
 import {
   Alert,
   Dimensions,
@@ -8,35 +9,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {NavigationProp} from '@react-navigation/native';
-
-type RootStackParamList = {
-  PresentButton: undefined; //current screen
-  ForgotPassword: undefined;
-};
-
-export type StackNavigation = NavigationProp<RootStackParamList>;
-
-interface PresentButtonPageProps {
-  navigation: StackNavigation;
-}
 
 export default function PresentButton() {
   const [modal, setModal] = useState({
     isVisible: false,
     isOverlay: 0,
   });
-
-  const toggleOverlay = () => {
-    setModal({
-      ...modal,
-      isVisible: !modal.isVisible,
-    });
-  };
 
   return (
     <View>

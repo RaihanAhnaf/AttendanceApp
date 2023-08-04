@@ -1,3 +1,4 @@
+import React, {useState} from 'react';
 import {
   Button,
   Dimensions,
@@ -6,14 +7,12 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  TranslateYTransform,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {BottomSheet} from 'react-native-btr';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import DatePicker from 'react-native-date-picker';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 

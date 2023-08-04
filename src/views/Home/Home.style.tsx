@@ -87,6 +87,7 @@ export default StyleSheet.create({
     marginBottom: 10,
   },
   boxContent: {
+    display: 'flex',
     flex: 1,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
@@ -96,7 +97,6 @@ export default StyleSheet.create({
     marginTop: 30,
     marginHorizontal: 15,
     paddingVertical: 20,
-    height: 235,
     borderRadius: 16,
     backgroundColor: 'white',
   },
@@ -248,5 +248,28 @@ export default StyleSheet.create({
   },
   bottomSpace: {
     marginBottom: 30,
+  },
+  time: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  time_text: {
+    fontSize: 60,
+    fontFamily: 'Poppins-SemiBold',
+    color: '#4318FE',
+  },
+  absenceBox: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    padding: 16,
+    marginHorizontal: 16,
+    borderRadius: 8,
+  },
+  absenceBox_text: {
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

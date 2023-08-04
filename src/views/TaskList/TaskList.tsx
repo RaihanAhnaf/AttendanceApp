@@ -1,22 +1,19 @@
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import React from 'react';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
-import style from './TaskList.style';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import CardTask from '../../components/CardTask';
-
-type RootStackParamList = {
-  TaskList: undefined;
-  Home: undefined;
-  TaskDetail: undefined;
-};
+import {RootStackParamList} from '../../types/root-stack.type';
+import style from './TaskList.style';
+import useTask from '../../hooks/useTask';
 
 interface TaskListPageProps {
   navigation: NativeStackNavigationProp<RootStackParamList, 'TaskList'>;
 }
 
 const TaskList = ({navigation}: TaskListPageProps) => {
+  const {tasks} = useTask();
   return (
     <SafeAreaView>
       <ScrollView>
@@ -33,18 +30,23 @@ const TaskList = ({navigation}: TaskListPageProps) => {
             <Text style={[style.titleText, style.blackColor]}>Task</Text>
           </View>
         </View>
-        <CardTask />
-        <View style={{alignItems: 'center', marginTop: 10}}>
-          <TouchableOpacity
-            style={style.btnLainnya}
-            onPress={() => {
-              navigation.navigate('TaskDetail');
-            }}>
-            <Text style={[style.btnText, style.primaryColor]}>
-              Test Task Detail
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {tasks.length != 0 ? (
+          tasks?.map((task, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() =>
+                navigation.navigate('TaskDetail', {
+                  task_id: task.id,
+                })
+              }>
+              <CardTask task={task} />
+            </TouchableOpacity>
+          ))
+        ) : (
+          <View style={style.absenceBox}>
+            <Text style={style.absenceBox_text}>Tidak ada data task</Text>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

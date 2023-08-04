@@ -26,7 +26,6 @@ export default StyleSheet.create({
     borderRadius: 16,
     backgroundColor: 'white',
     padding: 16,
-    alignSelf: 'flex-start',
   },
   textDescription: {
     fontFamily: 'Poppins-Regular',
@@ -38,6 +37,9 @@ export default StyleSheet.create({
     borderRadius: 16,
     backgroundColor: 'white',
     padding: 16,
+  },
+  mt10: {
+    marginTop: 10,
   },
   textDeadline: {
     fontFamily: 'Poppins-Regular',
@@ -82,5 +84,17 @@ export default StyleSheet.create({
     borderWidth: 1.5,
     padding: 16,
     borderRadius: 8,
+  },
+  btnComment: {
+    borderRadius: 8,
+    padding: 16,
+    backgroundColor: '#4318FE',
+  },
+  btnCommentText: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 14,
+    color: 'white',
+    textAlign: 'center',
+    fontWeight: '700',
   },
 });

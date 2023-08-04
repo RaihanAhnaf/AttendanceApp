@@ -1,31 +1,84 @@
+import React, {useContext} from 'react';
+import {useForm} from 'react-hook-form';
 import {
+  ImageBackground,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
-  ImageBackground,
-  TextInput,
-  Modal,
-  Alert,
-  Pressable,
-  Button,
 } from 'react-native';
-import React, {useState} from 'react';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import InputField from '../../components/InputField';
 import style from './SignIn.style';
-import {ScrollView} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-
-type RootStackParamList = {
-  SignIn: undefined;
-  Fingerprint: undefined;
-};
+import {loginService} from '../../services/auth/auth.service';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../../types/root-stack.type';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {UserContext} from '../../providers/user/user.context';
+import Snackbar from 'react-native-snackbar';
 
 interface SignInPageProps {
   navigation: NativeStackNavigationProp<RootStackParamList, 'SignIn'>;
 }
 
 const SignIn = ({navigation}: SignInPageProps) => {
+  const {fetchUser} = useContext(UserContext);
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: {errors},
+  } = useForm({
+    defaultValues: {
+      username: '',
+      password: '',
+    },
+  });
+
+  const checkIsTokenExist = async () => {
+    const token = await AsyncStorage.getItem('auth');
+    if (token) {
+      await fetchUser().then(() => {
+        navigation.navigate('Home');
+      });
+    }
+  };
+
+  const handleSignIn = async (data: any) => {
+    try {
+      const result = await loginService(data);
+      if (result) {
+        reset();
+
+        Snackbar.show({
+          text: 'Berhasil login',
+          duration: Snackbar.LENGTH_SHORT,
+          backgroundColor: 'green',
+        });
+
+        await AsyncStorage.setItem(
+          'auth',
+          JSON.stringify(result.data.data.token),
+        );
+
+        await fetchUser().then(() => {
+          navigation.navigate('Home');
+        });
+      }
+    } catch (error) {
+      Snackbar.show({
+        text: error!.toString(),
+        duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: 'red',
+      });
+    }
+  };
+
+  React.useEffect(() => {
+    checkIsTokenExist();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <ScrollView>
       <ImageBackground
@@ -35,20 +88,35 @@ const SignIn = ({navigation}: SignInPageProps) => {
           <Text style={[style.title, style.blackColor]}>Selamat Datang</Text>
           <Text style={style.subTitle}>Masukkan data Anda dengan benar</Text>
           <View style={style.container}>
-            <Text style={[style.label, style.blackColor]}>Username</Text>
-            <TextInput style={style.input} placeholder="Username" />
+            <Text style={[style.label, style.blackColor]}>
+              Username or Email
+            </Text>
+            <InputField
+              extra={{marginBottom: 15}}
+              control={control}
+              errors={errors}
+              name="username"
+              autoCapitalize="none"
+              placeholder="Email or Password"
+              validation={{
+                required: "Username or Email can't be empty",
+              }}
+            />
             <View style={style.space} />
             <Text style={[style.label, style.blackColor]}>Password</Text>
-            <TextInput
-              style={style.input}
+            <InputField
+              control={control}
+              errors={errors}
+              name="password"
               placeholder="Password"
               secureTextEntry={true}
+              validation={{
+                required: "Password can't be empty",
+              }}
             />
             <TouchableOpacity
               style={style.btn}
-              onPress={() => {
-                navigation.navigate('Fingerprint');
-              }}>
+              onPress={handleSubmit(handleSignIn)}>
               <Text style={[style.btnText, style.whiteColor]}>Sign In</Text>
             </TouchableOpacity>
           </View>

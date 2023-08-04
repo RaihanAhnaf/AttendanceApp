@@ -1,15 +1,24 @@
+import React from 'react';
 import {
-  Text,
-  StyleSheet,
-  View,
-  Modal,
-  Alert,
-  Pressable,
   Dimensions,
+  Linking,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
-import React, {useState} from 'react';
+import {AttendanceModelResponse} from '../models/attendance.model';
 
-const FileModal = ({isVisible, setModal}: {isVisible: any; setModal: any}) => {
+const FileModal = ({
+  isVisible,
+  onRequestClose,
+  attendance,
+}: {
+  isVisible: boolean;
+  onRequestClose: () => void;
+  attendance: AttendanceModelResponse;
+}) => {
   return (
     <View>
       <Modal
@@ -17,28 +26,33 @@ const FileModal = ({isVisible, setModal}: {isVisible: any; setModal: any}) => {
         transparent={true}
         visible={isVisible}
         style={style.modalParent}
-        onRequestClose={setModal}>
+        onRequestClose={onRequestClose}>
         <View style={style.centeredView}>
-          <Pressable style={style.bg} onPress={setModal} />
+          <Pressable style={style.bg} onPress={onRequestClose} />
           <View style={style.modalView}>
             <Text style={[style.modalTitleText, style.blackColor]}>
               Tidak Hadir
             </Text>
             <Text style={style.textTitle}>Status</Text>
             <View style={style.boxPilStatus}>
-              <Text style={[style.textPil, style.primaryColor]}>Sakit</Text>
+              <Text style={[style.textPil, style.primaryColor]}>
+                {attendance.absence_type === 'sick' ? 'Sakit' : 'Izin'}
+              </Text>
             </View>
             <Text style={style.textTitle}>Tanggal</Text>
-            <Text style={style.textSubTitle}>Jumat, 17 Maret 2023</Text>
-            <Text style={style.textTitle}>Keterangan</Text>
-            <Text style={style.textSubTitle}>Ijin sakit tipes</Text>
+            <Text style={style.textSubTitle}>
+              {attendance.date_day}, {attendance.date}
+            </Text>
             <Text style={style.textTitle}>File Bukti</Text>
-            <Text style={style.textSubTitle}>Kosong</Text>
-            {/* <Pressable
-                  style={[style.button, style.buttonClose]}
-                  onPress={() => setModalVisible(!modalVisible)}>
-                  <Text style={style.textStyle}>Hide Modal</Text>
-                </Pressable> */}
+            <Pressable
+              style={[style.button]}
+              onPress={async () => {
+                await Linking.openURL(
+                  `http://103.175.221.10:3000/${attendance.file_absence}`,
+                );
+              }}>
+              <Text style={style.textStyle}>File</Text>
+            </Pressable>
           </View>
         </View>
       </Modal>
@@ -56,6 +70,12 @@ const style = StyleSheet.create({
   },
   blackColor: {
     color: '#191C1F',
+  },
+  button: {
+    backgroundColor: '#4318FE',
+    borderRadius: 20,
+    padding: 10,
+    marginVertical: 10,
   },
   boxPilStatus: {
     borderWidth: 1.5,

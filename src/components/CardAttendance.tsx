@@ -1,37 +1,64 @@
-import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import useModal from '../hooks/useModal';
+import {AttendanceModelResponse} from '../models/attendance.model';
+import AttendanceBadge from './AttendanceBadge';
+import FileModal from './FileModal';
 
-const CardAttendance = () => {
+interface CardAttendanceProps {
+  attendance: AttendanceModelResponse;
+}
+
+const CardAttendance = ({attendance}: CardAttendanceProps) => {
+  const {showModal, setShowModal} = useModal();
   return (
-    <View style={style.boxHistory}>
-      <View style={{flexDirection: 'row'}}>
-        <View>
-          <Text style={[style.baseTextDay, style.primaryColor]}>Senin,</Text>
-          <Text style={[style.baseTextDate, style.primaryColor]}>
-            20 Maret 2023
-          </Text>
+    <>
+      <View style={style.boxHistory}>
+        <View style={{flexDirection: 'row'}}>
+          <View>
+            <Text style={[style.baseTextDay, style.primaryColor]}>
+              {attendance?.date_day},
+            </Text>
+            <Text style={[style.baseTextDate, style.primaryColor]}>
+              {attendance?.date}
+            </Text>
+          </View>
+          <AttendanceBadge status={attendance?.type as any} />
         </View>
-        <View style={[style.boxPil, style.boxPilHadir]}>
-          <Text style={[style.textPil, style.primaryColor]}>Hadir</Text>
+        <View style={{flexDirection: 'row'}}>
+          <View style={style.keteranganJamAbsensi}>
+            <Text style={style.descJam}>Jam Masuk</Text>
+            <Text style={[style.jam, style.primaryColor]}>
+              {attendance?.time_sign_in}
+            </Text>
+          </View>
+          <View style={style.keteranganJamAbsensi}>
+            <Text style={style.descJam}>Jam Pulang</Text>
+            <Text style={[style.jam, style.primaryColor]}>
+              {attendance?.time_sign_out ?? '-'}
+            </Text>
+          </View>
+          <View style={style.keteranganAbsensi}>
+            <Text style={style.descJam}>Keterangan</Text>
+            {attendance?.file_absence && (
+              <TouchableOpacity
+                onPress={() => {
+                  setShowModal(true);
+                }}>
+                <Text style={[style.fileButton, style.primaryColor]}>File</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       </View>
-      <View style={{flexDirection: 'row'}}>
-        <View style={style.keteranganJamAbsensi}>
-          <Text style={style.descJam}>Jam Masuk</Text>
-          <Text style={[style.jam, style.primaryColor]}>07:32</Text>
-        </View>
-        <View style={style.keteranganJamAbsensi}>
-          <Text style={style.descJam}>Jam Pulang</Text>
-          <Text style={[style.jam, style.primaryColor]}>14:38</Text>
-        </View>
-        <View style={style.keteranganAbsensi}>
-          <Text style={style.descJam}>Keterangan</Text>
-          {/* <TouchableOpacity>
-                            <Text style={[style.fileButton, style.primaryColor]}>file</Text>
-                        </TouchableOpacity> */}
-        </View>
-      </View>
-    </View>
+      <FileModal
+        attendance={attendance}
+        isVisible={showModal}
+        onRequestClose={() => {
+          setShowModal(false);
+        }}
+      />
+    </>
   );
 };
 

@@ -1,15 +1,16 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
+import {CommentModel} from '../models/task.model';
 
-const CardComment = () => {
+const CardComment = ({comment}: {comment: CommentModel}) => {
   return (
     <View style={[styles.boxText]}>
-      <Text style={[styles.textName, styles.primaryColor]}>Admin</Text>
-      <Text style={[styles.textComment, styles.blackColor]}>Lorem Ipsum</Text>
+      <Text style={[styles.textName, styles.primaryColor]}>{comment.name}</Text>
+      <Text style={[styles.textComment, styles.blackColor]}>
+        {comment.comment}
+      </Text>
       <View style={{flexDirection: 'row'}}>
-        <Text style={styles.textDate}>20 Maret 2023</Text>
-        <Text style={styles.textDate}>at</Text>
-        <Text style={styles.textDate}>11:41</Text>
+        <Text style={styles.textDate}>{comment.created_at}</Text>
       </View>
     </View>
   );

@@ -1,32 +1,92 @@
-import {
-  Text,
-  StyleSheet,
-  View,
-  SafeAreaView,
-  ScrollView,
-  TouchableOpacity,
-  Pressable,
-  TextInput,
-} from 'react-native';
-import React, {Component, useState} from 'react';
-import style from './TaskDetail.style';
+import {RouteProp, useRoute} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {CheckBox} from '@rneui/base';
+import React, {useEffect, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import Snackbar from 'react-native-snackbar';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import CardComment from '../../components/CardComment';
-import {CheckBox} from '@rneui/themed';
-
-type RootStackParamList = {
-  TaskDetail: undefined;
-  Home: undefined;
-};
+import InputField from '../../components/InputField';
+import {TaskModel} from '../../models/task.model';
+import {
+  commentAPostService,
+  getTaskByIdService,
+  toggleTodoTaskService,
+} from '../../services/task/task.service';
+import {RootStackParamList} from '../../types/root-stack.type';
+import style from './TaskDetail.style';
 
 interface TaskDetailPageProps {
   navigation: NativeStackNavigationProp<RootStackParamList, 'TaskDetail'>;
 }
 
 const TaskDetail = ({navigation}: TaskDetailPageProps) => {
-  const [checked1, setChecked1] = React.useState(false);
-  const [checked2, setChecked2] = React.useState(false);
+  const [task, setTask] = useState<TaskModel | null>(null);
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: {errors},
+  } = useForm({
+    defaultValues: {
+      comment: '',
+    },
+  });
+
+  const router = useRoute<RouteProp<RootStackParamList, 'TaskDetail'>>();
+
+  const getTask = async () => {
+    try {
+      const result = await getTaskByIdService(router.params.task_id.toString());
+      if (result) {
+        setTask(result);
+      }
+    } catch (error) {
+      navigation.goBack();
+      Snackbar.show({
+        text: error!.toString(),
+        duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: 'red',
+      });
+      console.log(error);
+    }
+  };
+
+  const toggleTodo = async (todoId: number) => {
+    try {
+      const result = await toggleTodoTaskService(
+        router.params.task_id.toString(),
+        todoId.toString(),
+      );
+
+      if (result.statusCode === 200) {
+        getTask();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleComment = async (data: any) => {
+    try {
+      const result = await commentAPostService(router.params.task_id, data);
+
+      if (result.statusCode === 201) {
+        reset();
+        getTask();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getTask();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <ScrollView>
       <View style={style.container}>
@@ -39,22 +99,12 @@ const TaskDetail = ({navigation}: TaskDetailPageProps) => {
               onPress={() => navigation.goBack()}
             />
           </TouchableOpacity>
-          <Text style={[style.titleText, style.blackColor]}>
-            Judul aokwoake
-          </Text>
+          <Text style={[style.titleText, style.blackColor]}>{task?.title}</Text>
         </View>
       </View>
       <View style={style.boxDescription}>
         <Text style={[style.primaryColor, style.textDescription]}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum
-          dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-          incididunt ut labore et dolore magna aliqua.
+          {task?.description}
         </Text>
       </View>
       <View style={style.boxDeadline}>
@@ -62,49 +112,60 @@ const TaskDetail = ({navigation}: TaskDetailPageProps) => {
           <Text style={style.textDeadline}>Deadline</Text>
           <View style={{marginLeft: 'auto'}}>
             <Text style={[style.textDeadlineDate, style.primaryColor]}>
-              20 Maret 2023
+              {task?.deadline.formatted}
             </Text>
           </View>
         </View>
       </View>
       <View style={style.boxToDo}>
         <Text style={style.textDeadline}>To Do</Text>
-        <CheckBox
-          checked={checked1}
-          onPress={() => setChecked1(!checked1)}
-          iconType="material-community"
-          checkedIcon="checkbox-marked"
-          uncheckedIcon="checkbox-blank-outline"
-          checkedColor="blue"
-          title="Task 1"
-        />
-        <CheckBox
-          checked={checked2}
-          onPress={() => setChecked2(!checked2)}
-          iconType="material-community"
-          checkedIcon="checkbox-marked"
-          uncheckedIcon="checkbox-blank-outline"
-          checkedColor="blue"
-          title="Task 2"
-        />
+        {task?.todos.length! > 0 ? (
+          task?.todos.map((todo, index) => (
+            <CheckBox
+              key={index}
+              checked={todo.is_done}
+              onPress={() => toggleTodo(todo.id)}
+              iconType="material-community"
+              checkedIcon="checkbox-marked"
+              uncheckedIcon="checkbox-blank-outline"
+              checkedColor="blue"
+              title={todo.title}
+            />
+          ))
+        ) : (
+          <Text style={[style.textDeadline, style.mt10]}>No To Do</Text>
+        )}
       </View>
       <View style={style.boxToDo}>
         <Text>Comment</Text>
-        <CardComment />
-        <TextInput
+        {task?.comments.length! > 0 ? (
+          task?.comments.map((comment, index) => (
+            <CardComment comment={comment} key={index} />
+          ))
+        ) : (
+          <Text style={[style.textDeadline, style.mt10]}>No Comments</Text>
+        )}
+        <InputField
+          control={control}
+          errors={errors}
+          name="comment"
+          validation={{required: 'Comment is required'}}
           style={{
-            borderWidth: 1.5,
+            borderWidth: 0.1,
             borderRadius: 5,
             marginTop: 20,
+            marginBottom: 10,
             maxHeight: 100,
             paddingLeft: 16,
           }}
           placeholder="Add Comment"
         />
+        <TouchableOpacity
+          onPress={handleSubmit(handleComment)}
+          style={[style.btnComment, {marginTop: 30}]}>
+          <Text style={[style.btnCommentText]}>Add Comment</Text>
+        </TouchableOpacity>
       </View>
-      <Pressable style={style.btn} onPress={() => []}>
-        <Text style={[style.btnText, style.whiteColor]}>Selesai</Text>
-      </Pressable>
     </ScrollView>
   );
 };

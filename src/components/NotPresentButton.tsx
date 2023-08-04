@@ -1,31 +1,46 @@
+import React, {useState} from 'react';
 import {
-  Alert,
   Dimensions,
   Modal,
   Pressable,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import DocumentPicker, {
+  DocumentPickerResponse,
+} from 'react-native-document-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-export default function NotPresentButton() {
+export default function NotPresentButton(props: {
+  fileSelected: (file: DocumentPickerResponse | null) => void;
+  typeSelected: (btnSelected: number) => void;
+  onSubmited: () => void;
+}) {
+  const {fileSelected, typeSelected, onSubmited} = props;
   const [modal, setModal] = useState({
     isVisible: false,
     isOverlay: 0,
   });
 
-  const [btnSelected, setBtnSelected] = useState(1);
+  const [file, setFile] = useState<DocumentPickerResponse | null>(null);
 
-  const toggleOverlay = () => {
-    setModal({
-      ...modal,
-      isVisible: !modal.isVisible,
-    });
+  const handleUploadFile = async () => {
+    try {
+      const res = await DocumentPicker.pickSingle({
+        type: [DocumentPicker.types.images, DocumentPicker.types.pdf],
+        copyTo: 'cachesDirectory',
+      });
+
+      fileSelected(res);
+      setFile(res);
+    } catch (err) {
+      console.log(err);
+    }
   };
+
+  const [btnSelected, setBtnSelected] = useState<number | null>(null);
 
   return (
     <View>
@@ -49,7 +64,8 @@ export default function NotPresentButton() {
           visible={modal.isVisible}
           style={styles.modalParent}
           onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
+            setFile(null);
+            setBtnSelected(null);
             setModal({
               ...modal,
               isVisible: !modal.isVisible,
@@ -59,6 +75,8 @@ export default function NotPresentButton() {
             <Pressable
               style={styles.bg}
               onPress={() => {
+                setFile(null);
+                setBtnSelected(null);
                 setModal({
                   ...modal,
                   isVisible: !modal.isVisible,
@@ -73,15 +91,18 @@ export default function NotPresentButton() {
               <View style={{flexDirection: 'row'}}>
                 <Pressable
                   style={[
-                    btnSelected == 1
+                    btnSelected === 1
                       ? styles.btnSelected
                       : styles.btnNotSelected,
                   ]}
-                  onPress={() => setBtnSelected(1)}>
+                  onPress={() => {
+                    typeSelected(1);
+                    setBtnSelected(1);
+                  }}>
                   <Text
                     style={[
                       styles.textPil,
-                      btnSelected == 1
+                      btnSelected === 1
                         ? styles.primaryColor
                         : styles.blackColor,
                     ]}>
@@ -90,15 +111,18 @@ export default function NotPresentButton() {
                 </Pressable>
                 <Pressable
                   style={[
-                    btnSelected == 2
+                    btnSelected === 2
                       ? styles.btnSelected
                       : styles.btnNotSelected,
                   ]}
-                  onPress={() => setBtnSelected(2)}>
+                  onPress={() => {
+                    typeSelected(2);
+                    setBtnSelected(2);
+                  }}>
                   <Text
                     style={[
                       styles.textPil,
-                      btnSelected == 2
+                      btnSelected === 2
                         ? styles.primaryColor
                         : styles.blackColor,
                     ]}>
@@ -106,20 +130,18 @@ export default function NotPresentButton() {
                   </Text>
                 </Pressable>
               </View>
-              <Text style={styles.textTitle}>Keterangan</Text>
-              <TextInput
-                multiline={true}
-                numberOfLines={4}
-                style={{
-                  borderWidth: 1,
-                  borderRadius: 5,
-                  marginBottom: 20,
-                  maxHeight: 100,
-                }}
-                placeholder="Keterangan"
-              />
               <Text style={styles.textTitle}>File Bukti</Text>
-              <Pressable style={styles.btnUpload} onPress={() => []}>
+              {file !== null && (
+                <Text
+                  style={{
+                    marginBottom: 10,
+                  }}>
+                  {file.name}
+                </Text>
+              )}
+              <Pressable
+                onPress={() => handleUploadFile()}
+                style={[styles.btnUpload, styles.btnFilled]}>
                 <Icon
                   name="attach-file"
                   color={'white'}
@@ -130,7 +152,26 @@ export default function NotPresentButton() {
                   Upload File
                 </Text>
               </Pressable>
-              <Pressable style={styles.btn} onPress={() => []}>
+              <Pressable
+                style={[
+                  styles.btn,
+                  file == null || btnSelected == null
+                    ? styles.btnDisabled
+                    : styles.btnFilled,
+                ]}
+                onPress={
+                  file == null || btnSelected == null
+                    ? () => {}
+                    : () => {
+                        onSubmited();
+                        setFile(null);
+                        setBtnSelected(null);
+                        setModal({
+                          ...modal,
+                          isVisible: !modal.isVisible,
+                        });
+                      }
+                }>
                 <Text style={[styles.btnText, styles.whiteColor]}>Submit</Text>
               </Pressable>
             </View>
@@ -157,8 +198,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 56,
-    marginTop: 40,
-    backgroundColor: '#4318FE',
+    marginTop: 30,
     borderRadius: 8,
   },
   btnText: {
@@ -185,7 +225,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   modalView: {
-    height: 500,
+    height: height * 0.6,
     width: 328,
     padding: 24,
     backgroundColor: 'white',
@@ -272,9 +312,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 56,
-    marginTop: 10,
-    backgroundColor: '#868CFF',
     borderRadius: 8,
     flexDirection: 'row',
+  },
+  btnFilled: {
+    backgroundColor: '#4318FE',
+  },
+  btnDisabled: {
+    backgroundColor: '#CCCECF',
   },
 });
