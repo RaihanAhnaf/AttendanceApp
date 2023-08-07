@@ -186,7 +186,7 @@ export const BottomSheets = () => {
               </View>
             </View>
             <Pressable style={style.btn} onPress={() => []}>
-              <Text style={[style.btnText, style.whiteColor]}>Submit</Text>
+              <Text style={[style.btnText, style.whiteColor]}>Kirim</Text>
             </Pressable>
           </View>
         </View>

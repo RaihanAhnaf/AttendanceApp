@@ -34,7 +34,7 @@ const ForgotPassword = ({navigation}: ForgotPasswordPageProps) => {
             onPress={() => {
               navigation.navigate('Blank');
             }}>
-            <Text style={[style.btnText, style.whiteColor]}>Submit</Text>
+            <Text style={[style.btnText, style.whiteColor]}>Kirim</Text>
           </TouchableOpacity>
         </View>
       </View>

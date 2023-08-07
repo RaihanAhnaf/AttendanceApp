@@ -65,7 +65,7 @@ const NotPresentModal = () => {
           <Text style={[style.btnText, style.whiteColor]}>Upload File</Text>
         </Pressable>
         <Pressable style={style.btn} onPress={() => []}>
-          <Text style={[style.btnText, style.whiteColor]}>Submit</Text>
+          <Text style={[style.btnText, style.whiteColor]}>Kirim</Text>
         </Pressable>
       </View>
     </View>

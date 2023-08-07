@@ -31,7 +31,7 @@ const CardTask = ({task}: CardTaskProps) => {
           </Text>
         </View>
       </View>
-      <Text style={styles.textSubTitleDate}>Deadline</Text>
+      <Text style={styles.textSubTitleDate}>Tenggat Waktu</Text>
       <Text style={[styles.baseTextDeadline, styles.primaryColor]}>
         {task?.deadline?.formatted}
       </Text>

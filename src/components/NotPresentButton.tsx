@@ -172,7 +172,7 @@ export default function NotPresentButton(props: {
                         });
                       }
                 }>
-                <Text style={[styles.btnText, styles.whiteColor]}>Submit</Text>
+                <Text style={[styles.btnText, styles.whiteColor]}>Kirim</Text>
               </Pressable>
             </View>
           </View>

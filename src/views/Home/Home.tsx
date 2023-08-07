@@ -219,7 +219,7 @@ const Home = ({navigation}: HomePageProps) => {
               </View>
             )}
             <View style={{flexDirection: 'row'}}>
-              <Text style={[style.subTitleText, style.blackColor]}>Task</Text>
+              <Text style={[style.subTitleText, style.blackColor]}>Tugas</Text>
               <View style={style.btnLainnya2}>
                 <TouchableOpacity
                   onPress={() => {

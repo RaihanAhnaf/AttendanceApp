@@ -27,7 +27,7 @@ const TaskList = ({navigation}: TaskListPageProps) => {
                 onPress={() => navigation.goBack()}
               />
             </TouchableOpacity>
-            <Text style={[style.titleText, style.blackColor]}>Task</Text>
+            <Text style={[style.titleText, style.blackColor]}>Tugas</Text>
           </View>
         </View>
         {tasks.length != 0 ? (

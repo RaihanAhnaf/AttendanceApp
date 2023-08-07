@@ -89,7 +89,7 @@ const SignIn = ({navigation}: SignInPageProps) => {
           <Text style={style.subTitle}>Masukkan data Anda dengan benar</Text>
           <View style={style.container}>
             <Text style={[style.label, style.blackColor]}>
-              Username or Email
+              Username atau Email
             </Text>
             <InputField
               extra={{marginBottom: 15}}
@@ -97,9 +97,9 @@ const SignIn = ({navigation}: SignInPageProps) => {
               errors={errors}
               name="username"
               autoCapitalize="none"
-              placeholder="Email or Password"
+              placeholder="Username atau Email"
               validation={{
-                required: "Username or Email can't be empty",
+                required: "Username atau Email can't be empty",
               }}
             />
             <View style={style.space} />
@@ -117,7 +117,7 @@ const SignIn = ({navigation}: SignInPageProps) => {
             <TouchableOpacity
               style={style.btn}
               onPress={handleSubmit(handleSignIn)}>
-              <Text style={[style.btnText, style.whiteColor]}>Sign In</Text>
+              <Text style={[style.btnText, style.whiteColor]}>Masuk</Text>
             </TouchableOpacity>
           </View>
         </View>

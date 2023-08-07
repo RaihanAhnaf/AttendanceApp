@@ -109,7 +109,7 @@ const TaskDetail = ({navigation}: TaskDetailPageProps) => {
       </View>
       <View style={style.boxDeadline}>
         <View style={{flexDirection: 'row'}}>
-          <Text style={style.textDeadline}>Deadline</Text>
+          <Text style={style.textDeadline}>Tenggat Waktu</Text>
           <View style={{marginLeft: 'auto'}}>
             <Text style={[style.textDeadlineDate, style.primaryColor]}>
               {task?.deadline.formatted}
@@ -118,7 +118,7 @@ const TaskDetail = ({navigation}: TaskDetailPageProps) => {
         </View>
       </View>
       <View style={style.boxToDo}>
-        <Text style={style.textDeadline}>To Do</Text>
+        <Text style={style.textDeadline}>Daftar Tugas</Text>
         {task?.todos.length! > 0 ? (
           task?.todos.map((todo, index) => (
             <CheckBox
@@ -137,7 +137,7 @@ const TaskDetail = ({navigation}: TaskDetailPageProps) => {
         )}
       </View>
       <View style={style.boxToDo}>
-        <Text>Comment</Text>
+        <Text>Komentar</Text>
         {task?.comments.length! > 0 ? (
           task?.comments.map((comment, index) => (
             <CardComment comment={comment} key={index} />
@@ -158,12 +158,12 @@ const TaskDetail = ({navigation}: TaskDetailPageProps) => {
             maxHeight: 100,
             paddingLeft: 16,
           }}
-          placeholder="Add Comment"
+          placeholder="Tambah Komentar"
         />
         <TouchableOpacity
           onPress={handleSubmit(handleComment)}
           style={[style.btnComment, {marginTop: 30}]}>
-          <Text style={[style.btnCommentText]}>Add Comment</Text>
+          <Text style={[style.btnCommentText]}>Tambah Komentar</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
